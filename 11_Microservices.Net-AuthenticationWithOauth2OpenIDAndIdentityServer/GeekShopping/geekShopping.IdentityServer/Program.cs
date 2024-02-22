@@ -14,7 +14,7 @@ builder.Services.AddDbContext<MySQLContext>(
     )));
 
 //Services Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityUser>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<MySQLContext>()
     .AddDefaultTokenProviders();
 
@@ -26,8 +26,9 @@ var geekIdentiyBuilder = builder.Services.AddIdentityServer(options =>
     options.Events.RaiseSuccessEvents = true;
     options.EmitStaticAudienceClaim = true;
 }).AddInMemoryIdentityResources(IdentityConfiguration.IdentityResources)
-  .AddInMemoryClients(IdentityConfiguration.Clients)
-  .AddAspNetIdentity<ApplicationUser>();
+      .AddInMemoryApiScopes(IdentityConfiguration.ApiScopes)
+      .AddInMemoryClients(IdentityConfiguration.Clients)
+      .AddAspNetIdentity<ApplicationUser>();
 geekIdentiyBuilder.AddDeveloperSigningCredential();
 
 // Add services to the container.
@@ -40,6 +41,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
+
+app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();

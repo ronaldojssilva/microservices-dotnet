@@ -7,7 +7,7 @@ namespace geekShopping.IdentityServer.Configuration
     {
         //perfis de usuarios
         public const string Admin = "Admin";
-        public const string Customer = "Customer";
+        public const string Client = "Client";
 
         //Identity resource
         //Informações relacionadas à identidade do usuário. Ex: Nome, e-mail etc
@@ -46,8 +46,8 @@ namespace geekShopping.IdentityServer.Configuration
                     ClientId = "geek_shopping",
                     ClientSecrets = {new Secret("my_super_secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.Code,
-                    RedirectUris={"http://localhost:46079/signin-oidc"},
-                    PostLogoutRedirectUris={"http://localhost:46079/signout-callback-oidc"},
+                    RedirectUris={"https://localhost:4430/signin-oidc"},
+                    PostLogoutRedirectUris={"https://localhost:4430/signout-callback-oidc"},
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
