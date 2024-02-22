@@ -1,4 +1,5 @@
-﻿using Duende.IdentityServer.Models;
+﻿using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
 
 namespace geekShopping.IdentityServer.Configuration
 {
@@ -20,8 +21,8 @@ namespace geekShopping.IdentityServer.Configuration
 
         //Api Scope. Identificadores ou rescursos que um client pode acessar. Ex.: GeekShopping.Web
         public static IEnumerable<ApiScope> ApiScopes =>
-            new List<ApiScope> 
-            { 
+            new List<ApiScope>
+            {
                 new ApiScope("geek_shopping", "GeekShopping Server"),
                 new ApiScope(name:"read", "Read data."),
                 new ApiScope(name:"write", "Write data."),
@@ -31,14 +32,29 @@ namespace geekShopping.IdentityServer.Configuration
 
         //Clients
         public static IEnumerable<Client> Clients =>
-            new List<Client> 
-            { 
+            new List<Client>
+            {
                 new Client
                 {
                     ClientId = "client",
                     ClientSecrets = {new Secret("my_super_secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     AllowedScopes = {"read", "write", "profile"},
+                },
+                new Client
+                {
+                    ClientId = "geek_shopping",
+                    ClientSecrets = {new Secret("my_super_secret".Sha256()) },
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RedirectUris={"http://localhost:46079/signin-oidc"},
+                    PostLogoutRedirectUris={"http://localhost:46079/signout-callback-oidc"},
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "geek_shopping"
+                    }
                 }
             };
     }
