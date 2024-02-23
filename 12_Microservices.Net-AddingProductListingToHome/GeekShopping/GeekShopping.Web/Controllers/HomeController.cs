@@ -26,6 +26,14 @@ namespace GeekShopping.Web.Controllers
             return View(products);
         }
 
+        [Authorize]
+        public async Task<IActionResult> Details(int id)
+        {
+            string token = await HttpContext.GetTokenAsync("access_token");
+            var model = await _productService.FindById(id, token);
+            return View(model);
+        }
+
         public IActionResult Privacy()
         {
             return View();
