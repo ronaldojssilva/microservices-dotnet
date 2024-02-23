@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekShopping.Web", "GeekSho
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekShopping.ProductAPI", "GeekShopping.ProductAPI\GeekShopping.ProductAPI.csproj", "{35522256-7FE0-4BF1-AEA0-0CD4BC261882}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "geekShopping.IdentityServer", "geekShopping.IdentityServer\geekShopping.IdentityServer.csproj", "{2EB6E3FF-F9BC-4675-97BB-F4E22E7B066E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "geekShopping.IdentityServer", "geekShopping.IdentityServer\geekShopping.IdentityServer.csproj", "{2EB6E3FF-F9BC-4675-97BB-F4E22E7B066E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
