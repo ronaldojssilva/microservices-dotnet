@@ -21,7 +21,6 @@ namespace GeekShopping.Web.Controllers
             return await HttpContext.GetTokenAsync("access_token");
         }
 
-        [Authorize]
         public async Task<IActionResult> Index()
         {
             string token = await GetToken();
