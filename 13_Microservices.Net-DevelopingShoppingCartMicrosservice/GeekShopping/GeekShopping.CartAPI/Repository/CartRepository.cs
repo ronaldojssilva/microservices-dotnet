@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using GeekShopping.CartAPI.Data.ValueObjects;
+using GeekShopping.CartAPI.Model;
 using GeekShopping.CartAPI.Model.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace GeekShopping.CartAPI.Repository
 {
@@ -15,33 +17,57 @@ namespace GeekShopping.CartAPI.Repository
             _mapper = mapper;
         }
 
-        public Task<bool> ApplyCoupon(string userId, string couponCode)
+        public async Task<bool> ApplyCoupon(string userId, string couponCode)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> ClearCart(string userId)
+        public async Task<bool> ClearCart(string userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CartVO> FindCartByUserId(string useId)
+        public async Task<CartVO> FindCartByUserId(string useId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> RemoveCoupon(string userId)
+        public async Task<bool> RemoveCoupon(string userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> RemoveFromCart(long cartDetailId)
+        public async Task<bool> RemoveFromCart(long cartDetailId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CartVO> SaveOrUpdate(CartVO cart)
+        public async Task<CartVO> SaveOrUpdate(CartVO cartVO)
         {
+            Cart cart = _mapper.Map<Cart>(cartVO);
+            //Check if the product is already saved in the database, if it does't exists then save
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == cartVO.CartDetails.FirstOrDefault().ProductId);
+            if (product == null)
+            {
+                _context.Products.Add(cart.CartDetails.FirstOrDefault().Product);
+                await _context.SaveChangesAsync();
+            }
+            //Check if CartHeader is null
+            var cartHeader = await _context.CartHeaders.AsNoTracking().FirstOrDefaultAsync(c => c.UserId == cart.CartHeader.UserId);
+            if (cartHeader == null)
+            {
+                //Create CartHeader and CartDetails
+                _context.CartHeaders.Add(cart.CartHeader);
+                await _context.SaveChangesAsync();
+                cart.CartDetails.FirstOrDefault().CartHeaderId = cart.CartHeader.Id;
+                cart.CartDetails.FirstOrDefault().Product = null;
+                _context.CartDetails.Add(cart.CartDetails.FirstOrDefault());
+                await _context.SaveChangesAsync();
+            }
+            //If CartHeader is not null
+            //Check if CartDetails has same product
+            //Create CartDetails
+            //Update product count and CartDetails
             throw new NotImplementedException();
         }
     }
