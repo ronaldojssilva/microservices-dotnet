@@ -1,9 +1,11 @@
-﻿using GeekShopping.Web.Services.IServices;
+﻿using GeekShopping.Web.Models;
+using GeekShopping.Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace GeekShopping.Web.Controllers
 {
-    public class CartController : Controller
+    public class CartController : BaseController
     {
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
@@ -16,7 +18,24 @@ namespace GeekShopping.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View();
+            CartViewModel? response = await FindCart();
+            return View(response);
+        }
+
+        private async Task<CartViewModel?> FindCart()
+        {
+            string token = await GetAccessToken();
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+            var response = await _cartService.FindCartByUserId(userId, token);
+            if (response?.CartHeader != null)
+            {
+                foreach (var detail in response.CartDetails)
+                {
+                    response.CartHeader.PurchaseAmount += detail.Product.Price * detail.Count;
+                }
+            }
+
+            return response;
         }
     }
 }

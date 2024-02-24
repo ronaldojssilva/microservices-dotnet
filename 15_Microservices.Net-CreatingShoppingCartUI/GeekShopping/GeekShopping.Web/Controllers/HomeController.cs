@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace GeekShopping.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IProductService _productService;
@@ -21,9 +21,10 @@ namespace GeekShopping.Web.Controllers
             _cartService = cartService;   
         }
 
+
         public async Task<IActionResult> Index()
         {
-            string token = await HttpContext.GetTokenAsync("access_token");
+            string token = await GetAccessToken();
             var products = await _productService.FindAll(token);
             return View(products);
         }
@@ -31,7 +32,7 @@ namespace GeekShopping.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int id)
         {
-            string token = await HttpContext.GetTokenAsync("access_token");
+            string token = await GetAccessToken();
             var model = await _productService.FindById(id, token);
             return View(model);
         }
@@ -41,7 +42,7 @@ namespace GeekShopping.Web.Controllers
         [Authorize]
         public async Task<IActionResult> DetailsPost(ProductViewModel model)
         {
-            string token = await HttpContext.GetTokenAsync("access_token");
+            string token = await GetAccessToken();
             CartViewModel cart = new CartViewModel()
             {
                 CartHeader = new CartHeaderViewModel
@@ -80,7 +81,7 @@ namespace GeekShopping.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Login()
         {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            string token = await GetAccessToken();
             return RedirectToAction(nameof(Index));
         }
 
