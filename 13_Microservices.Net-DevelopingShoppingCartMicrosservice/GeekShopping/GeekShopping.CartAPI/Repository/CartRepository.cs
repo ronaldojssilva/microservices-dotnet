@@ -24,7 +24,15 @@ namespace GeekShopping.CartAPI.Repository
 
         public async Task<bool> ClearCart(string userId)
         {
-            throw new NotImplementedException();
+            var cartHeader = await _context.CartHeaders.FirstOrDefaultAsync(c => c.UserId == userId);
+            if (cartHeader != null)
+            {
+                _context.CartDetails.RemoveRange(_context.CartDetails.Where(d => d.CartHeaderId == cartHeader.Id));
+                _context.CartHeaders.Remove(cartHeader);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         public async Task<CartVO> FindCartByUserId(string useId)
@@ -54,9 +62,9 @@ namespace GeekShopping.CartAPI.Repository
                 if (total > 0)
                 {
                     var cartHeaderToRemove = await _context.CartHeaders.FirstOrDefaultAsync(c => c.Id == cartDetail.CartHeaderId);
-                    _context.CartHeaders.Remove(cartHeaderToRemove);    
+                    _context.CartHeaders.Remove(cartHeaderToRemove);
                 }
-                await _context.SaveChangesAsync();  
+                await _context.SaveChangesAsync();
                 return true;
 
             }
@@ -92,7 +100,7 @@ namespace GeekShopping.CartAPI.Repository
             else
             {
                 //If CartHeader is not null
-                    //Check if CartDetails has same product
+                //Check if CartDetails has same product
                 var cartDetail = await _context.CartDetails.AsNoTracking().FirstOrDefaultAsync(
                     p => p.ProductId == cartVO.CartDetails.FirstOrDefault().ProductId &&
                     p.CartHeaderId == cartHeader.Id);
