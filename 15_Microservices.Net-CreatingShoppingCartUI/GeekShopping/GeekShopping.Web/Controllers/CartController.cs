@@ -1,5 +1,6 @@
 ﻿using GeekShopping.Web.Models;
 using GeekShopping.Web.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 
@@ -16,6 +17,7 @@ namespace GeekShopping.Web.Controllers
             _cartService = cartService;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             CartViewModel? response = await FindCart();

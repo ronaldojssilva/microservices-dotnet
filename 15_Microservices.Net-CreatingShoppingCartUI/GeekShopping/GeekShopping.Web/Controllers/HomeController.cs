@@ -39,7 +39,7 @@ namespace GeekShopping.Web.Controllers
 
         [HttpPost]
         [ActionName("Details")]
-        [Authorize]
+        [Authorize] 
         public async Task<IActionResult> DetailsPost(ProductViewModel model)
         {
             string token = await GetAccessToken();

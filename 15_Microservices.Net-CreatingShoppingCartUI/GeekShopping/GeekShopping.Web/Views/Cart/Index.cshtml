@@ -52,7 +52,7 @@
                                     </div>
                                 </div>
                                 <div class="col-3 col-md-2 pt-md-4" style="font-size:11px;">
-                                    <span style="font-size:17px;">@string.Format("{0:c)", item.Product.Price)</span>
+                                    <span style="font-size:17px;">@string.Format("{0:c}", item.Product.Price)</span>
                                 </div>
                                 <div class="col-3 col-md-2">
                                     <span style="font-size:17px;">@item.Product.Count</span>
@@ -68,10 +68,31 @@
 
                     <hr />
 
-                    <div>
+                    <div class="row">
+                        <div class="col-6">
+                            <span>Coupon:</span>
+                            <input asp-for="CartHeader.CouponCode" />
+                            <button type="submit" asp-action="ApplyCoupon" class="btn btn-success">
+                                Apply
+                            </button>
+                        </div>
+                        <div class="col-6 text-end">
+                            <span class="text-danger" style="font-size:21px;">
+                                Purchase Amount: @string.Format("{0:c}", Model.CartHeader.PurchaseAmount)
+                                <br/>
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer row">
+                    <div class="col-6 col-md-3 offset-md-6">
+
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-action="Checkout" class="btn btn-success form-control">
+                            <span>Checkout</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
