@@ -46,7 +46,25 @@ namespace GeekShopping.CartAPI.Repository
 
         public async Task<bool> RemoveFromCart(long cartDetailId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                CartDetail cartDetail = await _context.CartDetails.FirstOrDefaultAsync(d => d.Id == cartDetailId);
+                int total = _context.CartDetails.Where(d => d.CartHeaderId == cartDetail.CartHeaderId).Count();
+                _context.CartDetails.Remove(cartDetail);
+                if (total > 0)
+                {
+                    var cartHeaderToRemove = await _context.CartHeaders.FirstOrDefaultAsync(c => c.Id == cartDetail.CartHeaderId);
+                    _context.CartHeaders.Remove(cartHeaderToRemove);    
+                }
+                await _context.SaveChangesAsync();  
+                return true;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<CartVO> SaveOrUpdate(CartVO cartVO)
