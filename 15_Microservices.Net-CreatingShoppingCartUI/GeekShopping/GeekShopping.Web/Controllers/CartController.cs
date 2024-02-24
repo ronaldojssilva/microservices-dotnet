@@ -23,6 +23,19 @@ namespace GeekShopping.Web.Controllers
             CartViewModel? response = await FindCart();
             return View(response);
         }
+        public async Task<IActionResult> Remove(int id)
+        {
+            string token = await GetAccessToken();
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+            var response = await _cartService.RemoveFromCart(id, token);
+
+            if (response)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
 
         private async Task<CartViewModel?> FindCart()
         {
