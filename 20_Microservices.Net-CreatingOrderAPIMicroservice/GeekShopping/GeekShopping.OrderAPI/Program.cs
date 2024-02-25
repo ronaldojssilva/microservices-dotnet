@@ -1,3 +1,4 @@
+using GeekShopping.OrderAPI.Model.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -7,21 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-/ DB Connection
+// DB Connection
 var connection = builder.Configuration["MySQLConnection:MySQLConnectionString"] ;
 builder.Services.AddDbContext<MySQLContext>(
     options => options.UseMySql(connection,
                      new MySqlServerVersion(new Version(8, 2, 0)
     )));
 
-//Mapping
-IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-builder.Services.AddSingleton(mapper);
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //Repositories
-builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddSingleton<IRabbitMQMessageSender, RabbitMQMessageSender>();
+//builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+//builder.Services.AddSingleton<IRabbitMQMessageSender, RabbitMQMessageSender>();
 
 builder.Services.AddControllers();
 
