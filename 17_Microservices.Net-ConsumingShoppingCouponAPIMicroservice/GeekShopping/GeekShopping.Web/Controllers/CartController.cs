@@ -2,7 +2,6 @@
 using GeekShopping.Web.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.ResponseCompression;
 
 namespace GeekShopping.Web.Controllers
 {
@@ -10,11 +9,13 @@ namespace GeekShopping.Web.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
+        private readonly ICouponService _couponService;
 
-        public CartController(IProductService productService, ICartService cartService)
+        public CartController(IProductService productService, ICartService cartService, ICouponService couponService)
         {
             _productService = productService;
             _cartService = cartService;
+            _couponService = couponService;
         }
 
         [Authorize]
@@ -22,6 +23,31 @@ namespace GeekShopping.Web.Controllers
         {
             CartViewModel? response = await FindCart();
             return View(response);
+        }
+
+        private async Task<CartViewModel?> FindCart()
+        {
+            string token = await GetAccessToken();
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+            var response = await _cartService.FindCartByUserId(userId, token);
+            if (response?.CartHeader != null)
+            {
+                if (!string.IsNullOrEmpty(response.CartHeader.CouponCode))
+                {
+                    var coupon = await _couponService.GetCoupon(response.CartHeader.CouponCode, token);
+                    if (coupon?.Code != null)
+                    {
+                        response.CartHeader.DiscountAmount = coupon.DiscountAmount;
+                    }
+                }
+                foreach (var detail in response.CartDetails)
+                {
+                    response.CartHeader.PurchaseAmount += detail.Product.Price * detail.Count;
+                }
+                response.CartHeader.PurchaseAmount -= response.CartHeader.DiscountAmount;
+            }
+
+            return response;
         }
 
         [HttpPost]
@@ -69,20 +95,5 @@ namespace GeekShopping.Web.Controllers
             return View();
         }
 
-        private async Task<CartViewModel?> FindCart()
-        {
-            string token = await GetAccessToken();
-            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
-            var response = await _cartService.FindCartByUserId(userId, token);
-            if (response?.CartHeader != null)
-            {
-                foreach (var detail in response.CartDetails)
-                {
-                    response.CartHeader.PurchaseAmount += detail.Product.Price * detail.Count;
-                }
-            }
-
-            return response;
-        }
     }
 }
