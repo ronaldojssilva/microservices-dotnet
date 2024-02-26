@@ -1,6 +1,7 @@
 ﻿using GeekShopping.Web.Models;
 using GeekShopping.Web.Services.IServices;
 using GeekShopping.Web.Utils;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Reflection;
 
@@ -54,7 +55,8 @@ namespace GeekShopping.Web.Services
             {
                 return await response.ReadContentAs<CartHeaderViewModel>();
             }
-            else if (response.StatusCode.ToString().Equals("PreconditionFailed"))
+            //else if (response.StatusCode.ToString().Equals("PreconditionFailed"))
+            else if (response.StatusCode == HttpStatusCode.PreconditionFailed)
             {
                 return "Coupon Price has changed, please confirm!";
             }
