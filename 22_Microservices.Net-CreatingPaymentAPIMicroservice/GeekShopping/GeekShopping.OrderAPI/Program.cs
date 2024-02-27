@@ -26,6 +26,7 @@ builder.Services.AddSingleton(new OrderRepository(contextBuilder.Options));
 
 //RAbbitMq
 builder.Services.AddHostedService<RabbitMQCheckoutConsumer>();
+builder.Services.AddHostedService<RabbitMQPaymentConsumer>();
 builder.Services.AddSingleton<IRabbitMQMessageSender, RabbitMQMessageSender>();
 
 
