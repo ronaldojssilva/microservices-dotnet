@@ -1,26 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GeekShopping.Email.Model.Context;
+using GeekShopping.Email.Messages;
+using GeekShopping.Email.Model;
 
 namespace GeekShopping.Email.Repository
 {
-    public class OrderRepository : IOrderRepository
+    public class EmailRepository : IEmailRepository
     {
         private readonly DbContextOptions<MySQLContext> _context;
 
-        public OrderRepository(DbContextOptions<MySQLContext> context)
+        public EmailRepository(DbContextOptions<MySQLContext> context)
         {
             _context = context;
         }
 
-        public async Task UpdateOrderPaymentStatus(long orderHeaderId, bool paid)
+        public async Task LogEmail(UpdatePaymentResultMessage message)
         {
-            //await using var _db = new MySQLContext(_context);
-            //var header = await _db.Headers.FirstOrDefaultAsync(o => o.Id == orderHeaderId);
-            //if (header != null)
-            //{
-            //    header.PaymentStatus = paid;
-            //    await _db.SaveChangesAsync();
-            //}
+            EmailLog email = new EmailLog
+            {
+                Email = message.Email,
+                SentDate = DateTime.Now,
+                Log = $"Order - {message.OrderId} has been created successfully"
+            };
+            await using var _db = new MySQLContext(_context);
+            _db.Emails.Add(email);
+            await _db.SaveChangesAsync();
         }
     }
 }
